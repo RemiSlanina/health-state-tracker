@@ -1,0 +1,36 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# PyCharm / JetBrains
+.idea/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Environment variables / secrets
+.env
+
+# Local dev notes
+dev-notes/
+private-notes/
+
+# Database files (if using sqlite later accidentally)
+*.sqlite3
+*.db
+
+# Test / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Build artifacts
+dist/
+build/
