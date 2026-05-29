@@ -1,11 +1,17 @@
+from app.models import HealthEntry
 from db import (create_entry, get_entries, update_entry, delete_entry, search_notes, search_food_tolerance,
                 get_entries_by_energy, get_entries_by_pain)
 
 def main():
     try:
-        create_entry(
-            4,5,7,"toast tolerated", "noise sensitivity high"
+        entry = HealthEntry(
+            energy_level=4,
+            pain_level=4,
+            sensory_load=7,
+            food_tolerance="toast tolerated",
+            note="noise sensitivity high"
         )
+        create_entry(entry)
 
         update_entry(3, 9)
         entries = get_entries()
@@ -14,10 +20,13 @@ def main():
             print(entry)
         print("\n")
 
-        latest_entry_id = entries[0][0]
+        if not entries:
+            print("No entries")
+            return
+        latest_entry_id = entries[0].id
         print(latest_entry_id)
         delete_entry(latest_entry_id)
-        delete_entry(4)
+        delete_entry(11)
         entries = get_entries()
 
         for entry in entries:

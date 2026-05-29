@@ -2,7 +2,11 @@ from dotenv import load_dotenv
 import os
 import psycopg
 
+from app.models import HealthEntry
+
 load_dotenv()
+
+# ****************** CONNS ******************
 
 def get_connection():
     return psycopg.connect(
@@ -12,23 +16,43 @@ def get_connection():
         password=os.getenv("DB_PASSWORD"),
     )
 
+# ****************** HELPERS ******************
+# helper for converting rows
+def convert_tuples_into_health_entries(rows):
+    results = []
+
+    # if not rows:
+    #     print("No rows")
+    #     return results
+    # print(type(rows[0]))
+    # print(rows[0])
+
+    for row in rows:
+        results.append(HealthEntry(
+            energy_level=row[2],
+            pain_level=row[3],
+            sensory_load=row[4],
+            food_tolerance=row[5],
+            note=row[6],
+            id=row[0],
+            timestamp=row[1]
+        ))
+    return results
+
+
 # validation helper function
 def is_valid_scale_value(value, field_name):
     if value < 0 or value > 10:
         raise ValueError(f"{field_name} must be between 0 and 10")
 
+# ****************** ENTRY ******************
+
 # create, get, update entries
 
-def create_entry(
-        energy_level,
-        pain_level,
-        sensory_load,
-        food_tolerance,
-        note
-):
-    is_valid_scale_value(energy_level, "energy_level")
-    is_valid_scale_value(pain_level, "pain_level")
-    is_valid_scale_value(sensory_load, "sensory_load")
+def create_entry(entry:HealthEntry):
+    is_valid_scale_value(entry.energy_level, "energy_level")
+    is_valid_scale_value(entry.pain_level, "pain_level")
+    is_valid_scale_value(entry.sensory_load, "sensory_load")
     conn = get_connection()
     cur = conn.cursor()
 
@@ -42,11 +66,11 @@ def create_entry(
         note
         ) VALUES (%s, %s, %s, %s, %s)
         """, (
-        energy_level,
-        pain_level,
-        sensory_load,
-        food_tolerance,
-        note
+        entry.energy_level,
+        entry.pain_level,
+        entry.sensory_load,
+        entry.food_tolerance,
+        entry.note
         )
     )
 
@@ -65,9 +89,12 @@ def get_entries():
     )
 
     rows = cur.fetchall()
+    #print(type(rows[0]))
+    #print(rows[0])
     cur.close()
     conn.close()
-    return rows
+    return convert_tuples_into_health_entries(rows)
+
 
 def update_entry(
         entry_id,
@@ -103,8 +130,8 @@ def delete_entry(entry_id):
     cur.close()
     conn.close()
 
+# ****************** SEARCH ******************
 # search entries
-
 def search_notes(keyword):
     conn = get_connection()
     cur = conn.cursor()
@@ -120,7 +147,7 @@ def search_notes(keyword):
     rows = cur.fetchall()
     cur.close()
     conn.close()
-    return rows
+    return convert_tuples_into_health_entries(rows)
 
 def search_food_tolerance(keyword):
     conn = get_connection()
@@ -136,7 +163,7 @@ def search_food_tolerance(keyword):
     rows = cur.fetchall()
     cur.close()
     conn.close()
-    return rows
+    return convert_tuples_into_health_entries(rows)
 
 def get_entries_by_energy(level):
     is_valid_scale_value(level, "energy_level")
@@ -153,7 +180,7 @@ def get_entries_by_energy(level):
     rows = cur.fetchall()
     cur.close()
     conn.close()
-    return rows
+    return convert_tuples_into_health_entries(rows)
 
 def get_entries_by_pain(level):
     is_valid_scale_value(level, "pain_level")
@@ -170,5 +197,5 @@ def get_entries_by_pain(level):
     rows = cur.fetchall()
     cur.close()
     conn.close()
-    return rows
+    return convert_tuples_into_health_entries(rows)
 
