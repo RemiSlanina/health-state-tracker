@@ -1,9 +1,11 @@
 # Next
 
+
+## Done 
 - Improve update_entry() to update multiple fields
 - Add tests for validation
 
-# V1
+## V1
 
 - Create health entry
 - Read entries
@@ -14,7 +16,7 @@
 - Search by energy level
 - Search by pain level
 
-# Later Ideas
+## Later Ideas
 
 - FastAPI API
 - Simple frontend

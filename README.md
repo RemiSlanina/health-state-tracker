@@ -83,3 +83,16 @@ health-state-tracker/
 ## Notes
 
 This is primarily a learning project focused on backend concepts and iterative development.
+
+## Tests 
+
+Test with 
+
+```commandline
+ python -m pytest
+```
+
+instead of 
+```commandline
+pytest 
+```
