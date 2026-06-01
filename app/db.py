@@ -6,7 +6,7 @@ from app.models import HealthEntry
 
 load_dotenv()
 
-# ****************** CONNS ******************
+# ******************** CONNS ********************
 
 def get_connection():
     return psycopg.connect(
@@ -96,20 +96,24 @@ def get_entries():
     return convert_tuples_into_health_entries(rows)
 
 
-def update_entry(
-        entry_id,
-        energy_level
-):
-    is_valid_scale_value(energy_level, "energy_level")
+def update_entry(entry: HealthEntry):
+    is_valid_scale_value(entry.energy_level, "energy_level")
+    is_valid_scale_value(entry.pain_level, "pain_level")
+    is_valid_scale_value(entry.sensory_load, "sensory_load")
     conn = get_connection()
     cur = conn.cursor()
     cur.execute(
         """
         UPDATE health_entries 
-        SET energy_level = %s
+        SET energy_level = %s,
+        pain_level = %s,
+        sensory_load = %s,
+        food_tolerance = %s,
+        note = %s
         WHERE id = %s
         """,
-        (energy_level, entry_id)
+        (entry.energy_level, entry.pain_level, entry.sensory_load,
+                   entry.food_tolerance, entry.note, entry.id)
     )
     conn.commit()
     cur.close()

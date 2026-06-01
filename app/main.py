@@ -13,7 +13,14 @@ def main():
         )
         create_entry(entry)
 
-        update_entry(3, 9)
+        update_entry( HealthEntry(
+            energy_level=0,
+            pain_level=10,
+            sensory_load=7,
+            food_tolerance="toast tolerated",
+            note="noise sensitivity high",
+            id=5
+        ))
         entries = get_entries()
 
         for entry in entries:
