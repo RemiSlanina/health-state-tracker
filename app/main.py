@@ -1,6 +1,14 @@
 from app.models import HealthEntry
-from db import (create_entry, get_entries, update_entry, delete_entry, search_notes, search_food_tolerance,
-                get_entries_by_energy, get_entries_by_pain)
+from app.db import (
+    create_entry,
+    get_entries,
+    update_entry,
+    delete_entry,
+    search_notes,
+    search_food_tolerance,
+    get_entries_by_energy,
+    get_entries_by_pain,
+)
 
 def main():
     try:
