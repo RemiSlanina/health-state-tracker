@@ -1,7 +1,8 @@
 # Next
 
+## Done
 
-## Done 
+- Refactor connection using context managers (with get_connection() as conn...)
 - Improve update_entry() to update multiple fields
 - Add tests for validation
 

@@ -53,153 +53,136 @@ def create_entry(entry:HealthEntry):
     is_valid_scale_value(entry.energy_level, "energy_level")
     is_valid_scale_value(entry.pain_level, "pain_level")
     is_valid_scale_value(entry.sensory_load, "sensory_load")
-    conn = get_connection()
-    cur = conn.cursor()
-
-    cur.execute(
-        """
-        INSERT INTO health_entries (
-        energy_level, 
-        pain_level, 
-        sensory_load, 
-        food_tolerance, 
-        note
-        ) VALUES (%s, %s, %s, %s, %s)
-        """, (
-        entry.energy_level,
-        entry.pain_level,
-        entry.sensory_load,
-        entry.food_tolerance,
-        entry.note
-        )
-    )
-
-    conn.commit()
-    cur.close()
-    conn.close()
+    with get_connection() as conn: 
+        with conn.cursor() as cursor: 
+            cursor.execute(
+                """
+                INSERT INTO health_entries (
+                energy_level, 
+                pain_level, 
+                sensory_load, 
+                food_tolerance, 
+                note
+                ) VALUES (%s, %s, %s, %s, %s)
+                """, (
+                    entry.energy_level, 
+                    entry.pain_level, 
+                    entry.sensory_load, 
+                    entry.food_tolerance, 
+                    entry.note
+                )
+            )
+            
 
 def get_entries():
-    conn = get_connection()
-    cur = conn.cursor()
-    cur.execute(
-        """
-        SELECT * FROM health_entries
-        ORDER BY timestamp DESC
-        """
-    )
+    with get_connection() as conn: 
+        with conn.cursor() as cur: 
+            cur.execute(
+                """
+                SELECT * FROM health_entries
+                ORDER BY timestamp DESC 
+                """
+            )
+            rows = cur.fetchall() 
+    return convert_tuples_into_health_entries(rows) 
 
-    rows = cur.fetchall()
-    #print(type(rows[0]))
-    #print(rows[0])
-    cur.close()
-    conn.close()
-    return convert_tuples_into_health_entries(rows)
 
 
 def update_entry(entry: HealthEntry):
     is_valid_scale_value(entry.energy_level, "energy_level")
     is_valid_scale_value(entry.pain_level, "pain_level")
     is_valid_scale_value(entry.sensory_load, "sensory_load")
-    conn = get_connection()
-    cur = conn.cursor()
-    cur.execute(
-        """
-        UPDATE health_entries 
-        SET energy_level = %s,
-        pain_level = %s,
-        sensory_load = %s,
-        food_tolerance = %s,
-        note = %s
-        WHERE id = %s
-        """,
-        (entry.energy_level, entry.pain_level, entry.sensory_load,
-                   entry.food_tolerance, entry.note, entry.id)
-    )
-    conn.commit()
-    cur.close()
-    conn.close()
+    with get_connection() as conn: 
+        with conn.cursor() as cur: 
+            cur.execute(
+                """
+                UPDATE health_entries 
+                SET energy_level = %s, 
+                pain_level = %s, 
+                sensory_load = %s, 
+                food_tolerance = %s, 
+                note = %s 
+                WHERE id = %s
+                """, 
+                (entry.energy_level, entry.pain_level, entry.sensory_load, 
+                    entry.food_tolerance, entry.note, entry.id
+                )
+            ) 
 
 def delete_entry(entry_id):
-    conn = get_connection()
-    cur = conn.cursor()
-    cur.execute(
-        """
-        DELETE FROM health_entries 
-        WHERE id = %s 
-        """,
-        (entry_id,)
-    )
-    print(cur.rowcount)
-    conn.commit()
-    cur.close()
-    conn.close()
+    with get_connection() as conn: 
+        with conn.cursor() as cur: 
+            cur.execute(
+                """
+                DELETE FROM health_entries
+                WHERE id = %s
+                """, 
+                (entry_id, )
+            )
+            print(f"Deleted {cur.rowcount} rows")
+
 
 # ****************** SEARCH ******************
 # search entries
 def search_notes(keyword):
-    conn = get_connection()
-    cur = conn.cursor()
-
-    cur.execute(
-        """
-        SELECT * FROM health_entries
-        WHERE note ILIKE %s 
-        ORDER BY timestamp DESC
-        """,
-        (f"%{keyword}%",)
-    )
-    rows = cur.fetchall()
-    cur.close()
-    conn.close()
-    return convert_tuples_into_health_entries(rows)
+    keyword = keyword or "" # if None or empty 
+    with get_connection() as conn: 
+        with conn.cursor() as cur: 
+            cur.execute(
+                """SELECT * FROM health_entries
+                WHERE note ILIKE %s
+                ORDER BY timestamp DESC
+                """, 
+                #("%" + keyword + "%", ) # % = match any sequence of chars 
+                (f"%{keyword}%",)
+            ) 
+            rows = cur.fetchall() 
+    return convert_tuples_into_health_entries(rows) 
+    # LIKE is case sensitive and slightly faster 
+    # ILIKE is not case sensitive 
 
 def search_food_tolerance(keyword):
-    conn = get_connection()
-    cur = conn.cursor()
-    cur.execute(
-        """
-        SELECT * FROM health_entries
-        WHERE food_tolerance ILIKE %s 
-        ORDER BY timestamp DESC
-        """,
-        (f"%{keyword}%",)
-    )
-    rows = cur.fetchall()
-    cur.close()
-    conn.close()
-    return convert_tuples_into_health_entries(rows)
+    with get_connection() as conn: 
+        with conn.cursor() as cur: 
+            cur.execute(
+                """SELECT * FROM health_entries 
+                WHERE food_tolerance ILIKE %s
+                ORDER BY timestamp DESC""", 
+                (f"%{keyword}%",)
+            )
+            rows = cur.fetchall() 
+    return convert_tuples_into_health_entries(rows) 
+
 
 def get_entries_by_energy(level):
     is_valid_scale_value(level, "energy_level")
-    conn = get_connection()
-    cur = conn.cursor()
-    cur.execute(
-        """
-        SELECT * FROM health_entries 
-        WHERE energy_level = %s
-        ORDER BY energy_level DESC
-        """,
-        (level,)
-    )
-    rows = cur.fetchall()
-    cur.close()
-    conn.close()
+    with get_connection() as conn: 
+        with conn.cursor() as cur: 
+            cur.execute(
+                """
+                SELECT * FROM health_entries 
+                WHERE energy_level = %s
+                ORDER BY energy_level DESC
+                """,
+                (level,)
+            )
+            rows = cur.fetchall()
     return convert_tuples_into_health_entries(rows)
+
+
 
 def get_entries_by_pain(level):
     is_valid_scale_value(level, "pain_level")
-    conn = get_connection()
-    cur = conn.cursor()
-    cur.execute(
-        """
-        SELECT * FROM health_entries 
-        WHERE pain_level = %s
-        ORDER BY pain_level DESC
-        """,
-        (level,)
-    )
-    rows = cur.fetchall()
-    cur.close()
-    conn.close()
+    with get_connection() as conn: 
+        with conn.cursor() as cur: 
+            cur.execute(
+                """
+                SELECT * FROM health_entries 
+                WHERE pain_level = %s
+                ORDER BY pain_level DESC
+                """,
+                (level,)
+            )
+            rows = cur.fetchall()
     return convert_tuples_into_health_entries(rows)
 
