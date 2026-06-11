@@ -61,10 +61,10 @@ Current:
 * psycopg
 * PyCharm
 * DataGrip
+* FastAPI
 
 Planned / exploring:
 
-* FastAPI
 * SQLAlchemy
 
 ## Project Structure
@@ -74,10 +74,10 @@ health-state-tracker/
 │
 ├── app/
 ├── notes/
-├── dev-notes/
+├── tests/
 ├── README.md
-├── requirements.txt
-└── schema.sql
+├── pyproject.toml
+└── uv.lock
 ```
 
 ## Notes
