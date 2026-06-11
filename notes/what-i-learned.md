@@ -1,5 +1,24 @@
 # What I learned
 
+##  Thursday, 11 June 2026 
+
+Install FastAPI qith uv:
+```bash 
+uv add fastapi
+uv add uvicorn
+```
+
+Run FastAPI with 
+```bash 
+uv run uvicorn app.api:app --reload
+```
+Inspect with: 
+Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+or using Swagger UI
+http://127.0.0.1:8000/docs 
+
+
+
 ## Tuesday, 9 June 2026
 
 ### Python Packaging
