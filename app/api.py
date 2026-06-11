@@ -1,5 +1,5 @@
 from fastapi import  FastAPI
-from app.db import get_entries, create_entry, delete_entry, update_entry
+from app.db import get_entries, create_entry, delete_entry, update_entry, get_entry
 from app.HealthEntryRequest import HealthEntryRequest
 from app.models import HealthEntry
 
@@ -12,6 +12,11 @@ def root():
 def get_entries_api():
     #print("Hello from api")
     return get_entries()
+
+@app.get("/entries/{entry_id}")
+def get_entry_api(entry_id: int):
+    print(entry_id)
+    return get_entry(entry_id)
 
 @app.post("/entries")
 def create_entry_api(entry: HealthEntryRequest):

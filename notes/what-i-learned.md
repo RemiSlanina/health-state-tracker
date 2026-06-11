@@ -2,6 +2,21 @@
 
 ##  Thursday, 11 June 2026 
 
+### FastAPI
+
+- Swagger UI is available at /docs.
+- @app.get() maps a URL to a Python function.
+- @app.post() maps a URL and HTTP POST requests to a Python function.
+- FastAPI automatically converts JSON into Pydantic models.
+- Path parameters can be extracted from URLs (e.g. /entries/{id}).
+
+### Python
+
+- Functions without an explicit return statement return None.
+- fetchone() returns a single tuple.
+- fetchall() returns a list of tuples.
+- Single-row and multi-row conversions may deserve separate functions.
+
 Install FastAPI qith uv:
 ```bash 
 uv add fastapi
@@ -15,9 +30,7 @@ uv run uvicorn app.api:app --reload
 Inspect with: 
 Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
 or using Swagger UI
-http://127.0.0.1:8000/docs 
-
-
+http://127.0.0.1:8000/docs
 
 ## Tuesday, 9 June 2026
 

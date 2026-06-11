@@ -17,27 +17,29 @@ def get_connection():
     )
 
 # ****************** HELPERS ******************
+# helper for converting a single row
+def convert_tuple_into_health_entry(row):
+    return HealthEntry(
+        id=row[0],
+        timestamp=row[1],
+
+        energy_level=row[2],
+        pain_level=row[3],
+        sensory_load=row[4],
+        food_tolerance=row[5],
+        note=row[6]
+    )
 # helper for converting rows
 def convert_tuples_into_health_entries(rows):
-    results = []
-
-    # if not rows:
-    #     print("No rows")
-    #     return results
-    # print(type(rows[0]))
-    # print(rows[0])
-
-    for row in rows:
-        results.append(HealthEntry(
-            energy_level=row[2],
-            pain_level=row[3],
-            sensory_load=row[4],
-            food_tolerance=row[5],
-            note=row[6],
-            id=row[0],
-            timestamp=row[1]
-        ))
-    return results
+    return [
+        convert_tuple_into_health_entry(row) for row in rows
+    ]
+    # results = []
+    # for row in rows:
+    #     results.append(
+    #         convert_tuple_into_health_entry(row)
+    #     )
+    # return results
 
 
 # validation helper function
@@ -83,10 +85,20 @@ def get_entries():
                 ORDER BY timestamp DESC 
                 """
             )
-            rows = cur.fetchall() 
-    return convert_tuples_into_health_entries(rows) 
+            rows = cur.fetchall()
+    return convert_tuples_into_health_entries(rows)
 
-
+def get_entry(entry_id):
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """SELECT * FROM health_entries 
+                WHERE id = %s
+                """,
+                (entry_id, )
+            )
+            r = cur.fetchone()
+    return convert_tuple_into_health_entry(r)
 
 def update_entry(entry: HealthEntry):
     is_valid_scale_value(entry.energy_level, "energy_level")

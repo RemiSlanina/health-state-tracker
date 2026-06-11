@@ -8,6 +8,7 @@ from app.db import (
     search_food_tolerance,
     get_entries_by_energy,
     get_entries_by_pain,
+    get_entry
 )
 
 def main():
@@ -71,13 +72,18 @@ def main():
     except ValueError as e:
         print(e)
 
+    print("")
+    print("get entry 120")
+    print("")
+    single_entry = get_entry(120)
+    print(single_entry)
+
 def print_results(results):
     if len(results) == 0:
         print("No results")
         return
     for result in results:
         print(result)
-
 
 if __name__ == "__main__":
     main()
