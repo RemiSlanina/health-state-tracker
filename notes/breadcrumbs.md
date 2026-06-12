@@ -2,6 +2,17 @@
 
 ## FastAPI
 
+FastAPI CRUD complete. 
+
+Done: 
+- Tests for convert tuples (db) 
+
+Next candidates:
+- 404 handling for missing entries
+- split row conversion helpers
+- one FastAPI test
+- React prototype
+
 Done:
 - GET /entries
 - POST /entries
