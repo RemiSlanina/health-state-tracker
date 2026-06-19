@@ -19,19 +19,21 @@ Done:
 - GET /entries/{id}
 - DELETE /entries/{id}
 - PUT /entries/{id}
-
-Possible next:
-- Return proper HTTP status codes
-- Investigate FastAPI response models
-
 Refactor:
-- Split convert_row_to_health_entry()
 - Split convert_rows_to_health_entries()
+
+
+Next candidates:
+- FastAPI endpoint tests
+- 404 handling for missing entries 
+- Return proper HTTP status codes
+- Integration tests against PostgreSQL
+- React frontend prototype
+- Investigate FastAPI response models
 
 Next steps:
 
 - Tests for context managers (with get_connection() as...)
-- Refactor convert tuples to make it more robust
 
 ## Next Tests (pending...)
 
