@@ -31,19 +31,30 @@ Next candidates:
 - React frontend prototype
 - Investigate FastAPI response models
 
-Next steps:
+## Testing Notes
 
-- Tests for context managers (with get_connection() as...)
+- Verify returned values.
+- Verify interactions with collaborators.
+- Verify SQL parameter order when placeholders are positional.
+- Use fixtures to remove repeated setup while keeping tests focused on behavior.
 
-## Next Tests (pending...)
+## Database Tests
 
-- create_entry() inserts row successfully
-- update_entry() changes stored values
-- delete_entry() removes row
-- search_notes() returns matching entries
-- search_food_tolerance() returns matching entries
-- get_entries_by_energy() filters correctly
-- get_entries_by_pain() filters correctly
+Done:
+- convert_tuple_into_health_entry()
+- convert_tuples_into_health_entries()
+- get_entry()
+- get_entries()
+- create_entry()
+- update_entry()
+- delete_entry()
+- validation failure prevents database writes
+
+Pending:
+- search_notes()
+- search_food_tolerance()
+- get_entries_by_energy()
+- get_entries_by_pain()
 
 ## Integration Tests (pending...)
 

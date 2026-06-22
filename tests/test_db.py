@@ -1,11 +1,10 @@
-from _pytest import fixtures
-
 from app.db import convert_tuple_into_health_entry, convert_tuples_into_health_entries
 from app.models import HealthEntry
 from unittest.mock import MagicMock, patch
 import pytest
 from app.db import get_entry, delete_entry, get_entries, create_entry, update_entry
 from contextlib import ExitStack
+from _pytest import fixtures
 
 @pytest.fixture
 def fake_db():
@@ -19,12 +18,11 @@ def fake_db():
 
     with patch("app.db.get_connection", return_value=fake_connection):
         yield fake_cursor
-
     # no return with ExitStack, yield instead
     #return fake_connection, fake_cursor
 
 @pytest.fixture
-def valid_health_entry():
+def health_entry():
     return HealthEntry(
         energy_level=0,
             pain_level=10,
@@ -34,22 +32,10 @@ def valid_health_entry():
             id=1,
     )
 
-@pytest.fixture
-def invalid_health_entry():
-    return HealthEntry(
-        energy_level=99,
-            pain_level=10,
-            sensory_load=7,
-            food_tolerance="toast",
-            note="noise",
-            id=1,
-    )
 
 def test_get_entries(fake_db):
     # no unpacking with ExitStack
     #fake_connection, fake_cursor = fake_db
-
-
     fake_db.fetchall.return_value = [
         (
             123,
@@ -71,13 +57,7 @@ def test_get_entries(fake_db):
         )
     ]
 
-    # with patch("app.db.get_connection", return_value=fake_connection):
     result = get_entries()
-
-    print(result)
-    print(len(result))
-    print(fake_db.fetchall.call_count)
-    print(fake_db.fetchall.call_args)
 
     assert result[0].id == 123
     assert result[0].timestamp == "2026-06-12"
@@ -105,7 +85,6 @@ def test_get_entries(fake_db):
 
     assert "SELECT * FROM health_entries" in query
     assert "ORDER BY timestamp DESC" in query
-    # params are empty
 
 
 def test_get_entry(fake_db):
@@ -142,9 +121,6 @@ def test_get_entry(fake_db):
 
 
 def test_delete_entry(fake_db):
-    #fake_connection, fake_cursor = fake_db
-
-    #with patch("app.db.get_connection", return_value=fake_connection):
     delete_entry(123)
 
     fake_db.execute.assert_called_once()
@@ -153,13 +129,8 @@ def test_delete_entry(fake_db):
     assert "WHERE id = %s" in query
     assert params == (123,)
 
-def test_create_entry(fake_db, valid_health_entry):
-    #fake_connection, fake_cursor = fake_db
-
-    # entry = valid_health_entry()
-
-    #with patch("app.db.get_connection", return_value=fake_connection):
-    create_entry(valid_health_entry)
+def test_create_entry(fake_db, health_entry):
+    create_entry(health_entry)
 
     fake_db.execute.assert_called_once()
     query, params = fake_db.execute.call_args.args
@@ -175,8 +146,8 @@ def test_create_entry(fake_db, valid_health_entry):
     )
 
 
-def test_update_entry(fake_db, valid_health_entry):
-    update_entry(valid_health_entry)
+def test_update_entry(fake_db, health_entry):
+    update_entry(health_entry)
 
     fake_db.execute.assert_called_once()
     query, params = fake_db.execute.call_args.args
@@ -194,37 +165,17 @@ def test_update_entry(fake_db, valid_health_entry):
     )
 
 
-def test_attempt_create_entry_fail(fake_db, invalid_health_entry):
-    #fake_connection, fake_cursor = fake_db
-
-    # entry = HealthEntry(
-    #     energy_level=99,
-    #         pain_level=10,
-    #         sensory_load=7,
-    #         food_tolerance="toast",
-    #         note="noise",
-    #         id=1
-    # )
-
+def test_attempt_create_entry_fail(fake_db, health_entry):
+    health_entry.energy_level = 99
     with pytest.raises(ValueError):
-        create_entry(invalid_health_entry)
+        create_entry(health_entry)
 
     fake_db.execute.assert_not_called()
 
-def test_attempt_update_entry_fail(fake_db, invalid_health_entry):
-    #fake_connection, fake_cursor = fake_db
-
-    # entry = HealthEntry(
-    #     energy_level=99,
-    #         pain_level=10,
-    #         sensory_load=7,
-    #         food_tolerance="toast",
-    #         note="noise",
-    #         id=1
-    # )
-
+def test_attempt_update_entry_fail(fake_db, health_entry):
+    health_entry.energy_level = 99
     with pytest.raises(ValueError):
-        update_entry(invalid_health_entry)
+        update_entry(health_entry)
 
     fake_db.execute.assert_not_called()
 
@@ -243,7 +194,7 @@ def test_convert_tuple_into_health_entry():
 
     result = convert_tuple_into_health_entry(row)
 
-    #assert type(result) == HealthEntry more better in python:
+    #assert type(result) == HealthEntry may be better in python:
     assert isinstance(result, HealthEntry)
 
     assert result.id == 123

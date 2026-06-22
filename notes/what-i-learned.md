@@ -1,5 +1,15 @@
 # What I learned
 
+## Monday, 22 June 2026
+
+### Psycopg / Context Managers
+
+- Connection context managers automatically commit on success.
+- Connection context managers automatically roll back on exceptions.
+- Cursor context managers automatically close cursors.
+- Resource management code can often be replaced with `with`.
+- Database functions using `with` can be unit-tested using MagicMock and patch().
+
 ##  Thursday, 11 June 2026 
 
 ### FastAPI
