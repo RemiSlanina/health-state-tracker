@@ -101,11 +101,23 @@ This is primarily a learning project focused on backend concepts and iterative d
 
 Test with 
 
-```commandline
+```bash
  python -m pytest
+```
+Run a single test by name or file and function: 
+```bash
+python -m pytest -k test_create_entry_api
+```
+```bash
+python -m pytest tests/test_api.py::test_create_entry_api 
+```
+
+Without stdout (for running print()):
+```bash
+python -m pytest tests/test_api.py::test_create_entry_api -s
 ```
 
 instead of 
-```commandline
+```bash
 pytest 
 ```
