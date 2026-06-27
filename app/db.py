@@ -66,6 +66,7 @@ def create_entry(entry:HealthEntry):
                 food_tolerance, 
                 note
                 ) VALUES (%s, %s, %s, %s, %s)
+                RETURNING * 
                 """, (
                     entry.energy_level, 
                     entry.pain_level, 
@@ -74,6 +75,8 @@ def create_entry(entry:HealthEntry):
                     entry.note
                 )
             )
+            row = cursor.fetchone()
+            return convert_tuple_into_health_entry(row)
             
 
 def get_entries():
@@ -115,11 +118,14 @@ def update_entry(entry: HealthEntry):
                 food_tolerance = %s, 
                 note = %s 
                 WHERE id = %s
+                RETURNING * 
                 """, 
                 (entry.energy_level, entry.pain_level, entry.sensory_load, 
                     entry.food_tolerance, entry.note, entry.id
                 )
-            ) 
+            )
+            row = cur.fetchone()
+            return convert_tuple_into_health_entry(row)
 
 def delete_entry(entry_id):
     with get_connection() as conn: 
@@ -128,10 +134,13 @@ def delete_entry(entry_id):
                 """
                 DELETE FROM health_entries
                 WHERE id = %s
+                RETURNING * 
                 """, 
                 (entry_id, )
             )
             print(f"Deleted {cur.rowcount} rows")
+            row = cur.fetchone()
+            return convert_tuple_into_health_entry(row)
 
 
 # ****************** SEARCH ******************

@@ -6,6 +6,7 @@ from app.db import get_entry, delete_entry, get_entries, create_entry, update_en
 from contextlib import ExitStack
 from _pytest import fixtures
 
+# *************************** FIXURES ***************************
 @pytest.fixture
 def fake_db():
     fake_connection = MagicMock()
@@ -32,6 +33,32 @@ def health_entry():
             id=1,
     )
 
+
+# *************************** HELPERS ***************************
+
+def assert_health_entry_data(result:HealthEntry, health_entry, timestamp=None):
+    assert isinstance(result, HealthEntry)
+    assert result.id == health_entry.id
+    assert result.energy_level == health_entry.energy_level
+    assert result.pain_level == health_entry.pain_level
+    assert result.sensory_load == health_entry.sensory_load
+    assert result.food_tolerance == health_entry.food_tolerance
+    assert result.note == health_entry.note
+    if timestamp is not None:
+        assert result.timestamp == timestamp
+
+def health_entry_row(entry, timestamp="2026-06-27"):
+    return (
+        entry.id,
+        timestamp,
+        entry.energy_level,
+        entry.pain_level,
+        entry.sensory_load,
+        entry.food_tolerance,
+        entry.note,
+    )
+
+# *************************** TESTS ***************************
 
 def test_get_entries(fake_db):
     # no unpacking with ExitStack
@@ -120,19 +147,25 @@ def test_get_entry(fake_db):
     assert params == (123,)
 
 
-def test_delete_entry(fake_db):
-    delete_entry(123)
+def test_delete_entry(fake_db, health_entry):
+    fake_db.fetchone.return_value = health_entry_row(health_entry)
+    result = delete_entry(123)
 
     fake_db.execute.assert_called_once()
+    fake_db.fetchone.assert_called_once()
     query, params = fake_db.execute.call_args.args
     assert "DELETE FROM health_entries" in query
     assert "WHERE id = %s" in query
     assert params == (123,)
 
+    assert_health_entry_data(result, health_entry, timestamp="2026-06-27")
+
 def test_create_entry(fake_db, health_entry):
-    create_entry(health_entry)
+    fake_db.fetchone.return_value = health_entry_row(health_entry, timestamp="2026-06-03")
+    result = create_entry(health_entry)
 
     fake_db.execute.assert_called_once()
+    fake_db.fetchone.assert_called_once()
     query, params = fake_db.execute.call_args.args
     assert "INSERT INTO health_entries" in query
     assert "VALUES (%s, %s, %s, %s, %s)" in query
@@ -145,11 +178,17 @@ def test_create_entry(fake_db, health_entry):
         "noise",
     )
 
+    assert_health_entry_data(result, health_entry, timestamp="2026-06-03")
+
+
 
 def test_update_entry(fake_db, health_entry):
-    update_entry(health_entry)
+    fake_db.fetchone.return_value = health_entry_row(health_entry)
+
+    result = update_entry(health_entry)
 
     fake_db.execute.assert_called_once()
+    fake_db.fetchone.assert_called_once()
     query, params = fake_db.execute.call_args.args
     assert "UPDATE health_entries" in query
     assert "SET" in query
@@ -163,6 +202,8 @@ def test_update_entry(fake_db, health_entry):
         "noise",
         1,
     )
+
+    assert_health_entry_data(result, health_entry, timestamp="2026-06-27")
 
 
 def test_attempt_create_entry_fail(fake_db, health_entry):
@@ -245,6 +286,4 @@ def test_convert_tuples_into_health_entries():
     assert results[1].sensory_load == 9
     assert results[1].food_tolerance == "rice"
     assert results[1].note == "light"
-
-
 

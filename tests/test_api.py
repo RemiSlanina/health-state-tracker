@@ -17,8 +17,14 @@ def test_get_entry_api():
         "food_tolerance": "avocado tolerated",
         "note": "noise"
     },)
-    response = client.get(f"/entries/{create_response.id}")
+    # unpack json and included id
+    created = create_response.json()
+    entry_id = created["id"]
+    # fetch the entry that got created and test it:
+    response = client.get(f"/entries/{entry_id}")
     assert response.status_code == 200
+    assert create_response.status_code == 200
+    print(create_response.json())
 
 def test_create_entry_api():
     client = TestClient(app)

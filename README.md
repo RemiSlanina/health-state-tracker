@@ -112,8 +112,9 @@ python -m pytest -k test_create_entry_api
 python -m pytest tests/test_api.py::test_create_entry_api 
 ```
 
-Without stdout (for running print()):
+Without stdout (for running print() (2 options)):
 ```bash
+python -m pytest -k test_get_entry_api -s
 python -m pytest tests/test_api.py::test_create_entry_api -s
 ```
 
