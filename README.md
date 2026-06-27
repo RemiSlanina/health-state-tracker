@@ -50,8 +50,21 @@ Possible future extensions may include:
 * data visualization
 * export/import functionality
 
-These are exploratory ideas and not part of the current scope.
+These are exploratory ideas and not part of the current scope. 
 
+## Run 
+
+Run 
+```bash
+uvicorn app.api:app --reload
+```
+Examples:
+```
+http://127.0.0.1:8000/entries/search/note?keyword=noise
+http://127.0.0.1:8000/entries/search/food?keyword=toast
+http://127.0.0.1:8000/entries/search/energy/4
+http://127.0.0.1:8000/entries/search/pain/7
+```
 ## Tech Stack
 
 Current:

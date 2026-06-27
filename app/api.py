@@ -1,5 +1,6 @@
 from fastapi import  FastAPI
-from app.db import get_entries, create_entry, delete_entry, update_entry, get_entry
+from app.db import (get_entries, create_entry, delete_entry, update_entry,
+                    get_entry, search_notes, search_food_tolerance, get_entries_by_energy, get_entries_by_pain,)
 from app.HealthEntryRequest import HealthEntryRequest
 from app.models import HealthEntry
 
@@ -45,3 +46,28 @@ def update_entry_api(entry_id: int, entry: HealthEntryRequest):
         entry_id
     ))
     return {"message": "Entry Updated"}
+
+# SEARCH endpoints
+
+# difference:
+# ?keyword=noise is a query parameter. like
+# http://127.0.0.1:8000/entries/search/note?keyword=noise
+# /energy/7 is a path parameter. For example:
+# http://127.0.0.1:8000/entries/search/energy/4
+
+@app.get("/entries/search/note")
+def search_notes_api(keyword: str):
+    # FastAPI sees keyword: str and automatically knows to read it from the query string.
+    return search_notes(keyword)
+
+@app.get("/entries/search/food")
+def search_food_api(keyword: str):
+    return search_food_tolerance(keyword)
+
+@app.get("/entries/search/energy/{level}")
+def search_energy_api(level:int):
+    return get_entries_by_energy(level)
+
+@app.get("/entries/search/pain/{level}")
+def search_pain_api(level:int):
+    return get_entries_by_pain(level)
