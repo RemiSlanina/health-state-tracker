@@ -1,4 +1,5 @@
-from fastapi import  FastAPI, HTTPException
+from typing import Annotated
+from fastapi import  FastAPI, HTTPException, Path
 from app.db import (get_entries, create_entry, delete_entry, update_entry,
                     get_entry, search_notes, search_food_tolerance, get_entries_by_energy, get_entries_by_pain,)
 from app.HealthEntryRequest import HealthEntryRequest
@@ -71,9 +72,9 @@ def search_food_api(keyword: str):
     return search_food_tolerance(keyword)
 
 @app.get("/entries/search/energy/{level}")
-def search_energy_api(level:int):
+def search_energy_api(level:Annotated[int, Path(ge=0, le=10)]):
     return get_entries_by_energy(level)
 
 @app.get("/entries/search/pain/{level}")
-def search_pain_api(level:int):
+def search_pain_api(level:Annotated[int, Path(ge=0, le=10)]):
     return get_entries_by_pain(level)
