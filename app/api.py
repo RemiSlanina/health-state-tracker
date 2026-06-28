@@ -11,7 +11,6 @@ def root():
 
 @app.get("/entries")
 def get_entries_api():
-    #print("Hello from api")
     return get_entries()
 
 @app.get("/entries/{entry_id}")
@@ -30,7 +29,6 @@ def create_entry_api(entry: HealthEntryRequest):
          entry.sensory_load,
          entry.food_tolerance,
          entry.note))
-    #print(entry)
     return entry_result
 
 @app.delete("/entries/{entry_id}")
@@ -39,7 +37,7 @@ def delete_entry_api(entry_id: int):
     if entry_result is None:
         raise HTTPException(status_code=404, detail="Entry not found.")
     return entry_result
-    return {"message": "Entry Deleted"}
+
 
 @app.put("/entries/{entry_id}")
 def update_entry_api(entry_id: int, entry: HealthEntryRequest):

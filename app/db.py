@@ -34,12 +34,6 @@ def convert_tuples_into_health_entries(rows):
     return [
         convert_tuple_into_health_entry(row) for row in rows
     ]
-    # results = []
-    # for row in rows:
-    #     results.append(
-    #         convert_tuple_into_health_entry(row)
-    #     )
-    # return results
 
 
 # validation helper function

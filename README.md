@@ -7,7 +7,7 @@ The project is intended as a lightweight backend-focused application for experim
 * PostgreSQL
 * Python
 * relational database design
-* backend architecture
+* backend architecture 
 * data persistence
 * accessibility-oriented design ideas
 
@@ -40,11 +40,9 @@ Many existing trackers assume high energy, high executive function, or complex i
 
 Possible future extensions may include:
 
-* search/filter functionality
 * tagging system
 * temporal pattern analysis
 * symptom/state correlations
-* FastAPI backend
 * expanded tracking
 * frontend/mobile interface
 * data visualization
