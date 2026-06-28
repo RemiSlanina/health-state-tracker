@@ -52,6 +52,8 @@ def is_valid_scale_value(value, field_name):
 # create, get, update entries
 
 def create_entry(entry:HealthEntry):
+    # Defensive validation.
+    # Requests are normally validated by Pydantic before reaching this layer.
     is_valid_scale_value(entry.energy_level, "energy_level")
     is_valid_scale_value(entry.pain_level, "pain_level")
     is_valid_scale_value(entry.sensory_load, "sensory_load")
@@ -105,6 +107,8 @@ def get_entry(entry_id):
     return convert_optional_row(row)
 
 def update_entry(entry: HealthEntry):
+    # Defensive validation.
+    # Requests are normally validated by Pydantic before reaching this layer.
     is_valid_scale_value(entry.energy_level, "energy_level")
     is_valid_scale_value(entry.pain_level, "pain_level")
     is_valid_scale_value(entry.sensory_load, "sensory_load")

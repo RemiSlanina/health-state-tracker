@@ -2,6 +2,25 @@ import pytest
 from app.api import app
 from starlette.testclient import TestClient
 
+# ****************** HELPER FUNCTIONS ******************
+@pytest.fixture
+def json_entry():
+    return {
+        "energy_level": 4,
+        "pain_level": 4,
+        "sensory_load": 5,
+        "food_tolerance": "avocado tolerated",
+        "note": "noise"
+    }
+@pytest.fixture
+def invalid_json_entry():
+    return {
+        "energy_level": 99,
+        "pain_level": 400,
+        "sensory_load": -5556,
+        "food_tolerance": "avocado tolerated",
+        "note": "noise"
+    }
 
 def test_get_entries_api():
     client = TestClient(app)
@@ -11,10 +30,8 @@ def test_get_entries_api():
 def test_get_entry_api(json_entry):
     client = TestClient(app)
     create_response = client.post("/entries", json=json_entry)
-    # unpack json and included id
     created = create_response.json()
     entry_id = created["id"]
-    # fetch the entry that got created and test it:
     response = client.get(f"/entries/{entry_id}")
     assert response.status_code == 200
     assert create_response.status_code == 200
@@ -30,11 +47,6 @@ def test_create_entry_api(json_entry):
     assert response.json()["pain_level"] == 4
     assert response.json()["sensory_load"] == 5
     assert response.json()["food_tolerance"] == "avocado tolerated"
-    # print(response.json())
-    # print(response.request.method)
-    # print(response.request.url)
-    # print(response.request.headers)
-    # print(response.request.content)
 
 def test_get_missing_entry_api():
     client = TestClient(app)
@@ -54,14 +66,18 @@ def test_update_missing_entry_api(json_entry):
     assert response.status_code == 404
     assert response.json() == {"detail": "Entry not found."}
 
+def test_create_entry_invalid_args_api(invalid_json_entry):
+    client = TestClient(app)
+    response = client.post("/entries", json=invalid_json_entry)
+    assert response.status_code == 422
 
-# ****************** HELPER FUNCTIONS ******************
-@pytest.fixture
-def json_entry():
-    return {
-        "energy_level": 4,
-        "pain_level": 4,
-        "sensory_load": 5,
-        "food_tolerance": "avocado tolerated",
-        "note": "noise"
-    }
+def test_update_entry_invalid_args_api(json_entry, invalid_json_entry):
+    client = TestClient(app)
+    create_response = client.post("/entries", json=json_entry)
+    # unpack json and included id
+    created = create_response.json()
+    entry_id = created["id"]
+    response = client.put(f"/entries/{entry_id}", json=invalid_json_entry)
+    assert response.status_code == 422
+
+
