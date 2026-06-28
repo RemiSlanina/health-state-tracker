@@ -100,8 +100,9 @@ def get_entry(entry_id):
                 """,
                 (entry_id, )
             )
-            r = cur.fetchone()
-    return convert_tuple_into_health_entry(r)
+            row = cur.fetchone()
+
+    return convert_optional_row(row)
 
 def update_entry(entry: HealthEntry):
     is_valid_scale_value(entry.energy_level, "energy_level")
@@ -125,7 +126,8 @@ def update_entry(entry: HealthEntry):
                 )
             )
             row = cur.fetchone()
-            return convert_tuple_into_health_entry(row)
+
+            return convert_optional_row(row)
 
 def delete_entry(entry_id):
     with get_connection() as conn: 
@@ -140,7 +142,8 @@ def delete_entry(entry_id):
             )
             print(f"Deleted {cur.rowcount} rows")
             row = cur.fetchone()
-            return convert_tuple_into_health_entry(row)
+
+            return convert_optional_row(row)
 
 
 # ****************** SEARCH ******************
@@ -157,7 +160,7 @@ def search_notes(keyword):
                 #("%" + keyword + "%", ) # % = match any sequence of chars 
                 (f"%{keyword}%",)
             ) 
-            rows = cur.fetchall() 
+            rows = cur.fetchall()
     return convert_tuples_into_health_entries(rows) 
     # LIKE is case sensitive and slightly faster 
     # ILIKE is not case sensitive 
@@ -207,3 +210,7 @@ def get_entries_by_pain(level):
             rows = cur.fetchall()
     return convert_tuples_into_health_entries(rows)
 
+def convert_optional_row(row):
+    if row is None:
+        return None
+    return convert_tuple_into_health_entry(row)

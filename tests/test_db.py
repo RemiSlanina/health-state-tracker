@@ -287,3 +287,20 @@ def test_convert_tuples_into_health_entries():
     assert results[1].food_tolerance == "rice"
     assert results[1].note == "light"
 
+def test_get_missing_entry(fake_db):
+    fake_db.fetchone.return_value = None
+    result = get_entry(123)
+    assert result is None
+    fake_db.fetchone.assert_called_once()
+
+def test_delete_missing_entry(fake_db):
+    fake_db.fetchone.return_value = None
+    result = delete_entry(123)
+    assert result is None
+    fake_db.fetchone.assert_called_once()
+
+def test_update_missing_entry(fake_db, health_entry):
+    fake_db.fetchone.return_value = None
+    result = update_entry(health_entry)
+    assert result is None
+    fake_db.fetchone.assert_called_once()

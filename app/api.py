@@ -1,4 +1,4 @@
-from fastapi import  FastAPI
+from fastapi import  FastAPI, HTTPException
 from app.db import (get_entries, create_entry, delete_entry, update_entry,
                     get_entry, search_notes, search_food_tolerance, get_entries_by_energy, get_entries_by_pain,)
 from app.HealthEntryRequest import HealthEntryRequest
@@ -17,26 +17,33 @@ def get_entries_api():
 @app.get("/entries/{entry_id}")
 def get_entry_api(entry_id: int):
     print(entry_id)
-    return get_entry(entry_id)
+    entry_result = get_entry(entry_id)
+    if entry_result is None:
+        raise HTTPException(status_code=404, detail="Entry not found.")
+    return entry_result
 
 @app.post("/entries")
 def create_entry_api(entry: HealthEntryRequest):
-    #print(entry)
-    return create_entry(HealthEntry(
+    entry_result = create_entry(HealthEntry(
         entry.energy_level,
          entry.pain_level,
          entry.sensory_load,
          entry.food_tolerance,
          entry.note))
+    #print(entry)
+    return entry_result
 
 @app.delete("/entries/{entry_id}")
 def delete_entry_api(entry_id: int):
-    return delete_entry(entry_id)
+    entry_result = delete_entry(entry_id)
+    if entry_result is None:
+        raise HTTPException(status_code=404, detail="Entry not found.")
+    return entry_result
     return {"message": "Entry Deleted"}
 
 @app.put("/entries/{entry_id}")
 def update_entry_api(entry_id: int, entry: HealthEntryRequest):
-    return update_entry( HealthEntry(
+    entry_result = update_entry(HealthEntry(
         entry.energy_level,
         entry.pain_level,
         entry.sensory_load,
@@ -44,6 +51,9 @@ def update_entry_api(entry_id: int, entry: HealthEntryRequest):
         entry.note,
         entry_id
     ))
+    if entry_result is None:
+        raise HTTPException(status_code=404, detail="Entry not found.")
+    return entry_result
 
 # SEARCH endpoints
 

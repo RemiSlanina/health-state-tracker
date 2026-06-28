@@ -60,7 +60,7 @@ uvicorn app.api:app --reload
 ```
 Examples:
 ```
-http://127.0.0.1:8000/entries/search/note?keyword=noise
+http://127.0.0.1:8000/docs # Swagger docs
 http://127.0.0.1:8000/entries/search/food?keyword=toast
 http://127.0.0.1:8000/entries/search/energy/4
 http://127.0.0.1:8000/entries/search/pain/7
